@@ -222,3 +222,4 @@ E:\KSA\KSAApi\obj\Debug\net8.0\refint\KSAApi.dll
 E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.pdb
 E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.genruntimeconfig.cache
 E:\KSA\KSAApi\obj\Debug\net8.0\ref\KSAApi.dll
+E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.sourcelink.json
