@@ -223,3 +223,9 @@ E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.pdb
 E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.genruntimeconfig.cache
 E:\KSA\KSAApi\obj\Debug\net8.0\ref\KSAApi.dll
 E:\KSA\KSAApi\obj\Debug\net8.0\KSAApi.sourcelink.json
+E:\KSA\KSAAPI\bin\Debug\net8.0\DnsClient.dll
+E:\KSA\KSAAPI\bin\Debug\net8.0\MongoDB.Bson.dll
+E:\KSA\KSAAPI\bin\Debug\net8.0\MongoDB.Driver.dll
+E:\KSA\KSAAPI\bin\Debug\net8.0\SharpCompress.dll
+E:\KSA\KSAAPI\bin\Debug\net8.0\Snappier.dll
+E:\KSA\KSAAPI\bin\Debug\net8.0\ZstdSharp.dll

@@ -6,7 +6,8 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 import { MatTableModule } from '@angular/material/table';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay()), provideAnimationsAsync(), provideAnimationsAsync()]
+  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideClientHydration(withEventReplay()), provideAnimationsAsync(), provideAnimationsAsync(), provideHttpClient(withFetch())]
 };

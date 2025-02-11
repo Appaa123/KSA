@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { FarmstockRoutingModule } from './farmstock-routing.module';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 
 @NgModule({
@@ -9,6 +10,10 @@ import { FarmstockRoutingModule } from './farmstock-routing.module';
   imports: [
     CommonModule,
     FarmstockRoutingModule
-  ]
+  ],
+  providers: [
+    provideHttpClient(withFetch()),
+    // other providers...
+  ],
 })
 export class FarmstockModule { }

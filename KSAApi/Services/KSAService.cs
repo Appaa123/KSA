@@ -1,3 +1,4 @@
+using System.Collections;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Common;
 
@@ -5,6 +6,12 @@ namespace KSAApi.Services;
 
 public class KSAServcie: IKSAService {
 
+private FarmStockRepository _farmStockRepository;
+public KSAServcie(FarmStockRepository farmStockRepository){
+
+    this._farmStockRepository = farmStockRepository;
+
+}
 CowStock cowStock = new CowStock();
 
 public async Task<CowStock> getRandomCowStock() {
@@ -17,5 +24,13 @@ public async Task<CowStock> getRandomCowStock() {
 
     return cowStock;
 }
+
+public async Task<List<FarmStock>> GetFarmStockAsync(){
+    return await _farmStockRepository.GetAllAsync();
+}
+
+public async Task AddFarmStockAsync(FarmStock farmStock){
+    await _farmStockRepository.CreateAsync(farmStock);
+} 
 
 }

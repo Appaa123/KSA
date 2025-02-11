@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { FarmstockComponent } from './farmstock/farmstock/farmstock.component';
 
 export const routes: Routes = [
-    { path: '', component: AppComponent },
+    { path: '', component: DashboardComponent },
     //{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'farmstock', component: FarmstockComponent}
