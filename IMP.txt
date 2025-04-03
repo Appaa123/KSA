@@ -1,0 +1,10 @@
+ng build --configuration=production --base-href "https://Appaa123.github.io/KSA/"
+
+
+https://github.com/Appaa123/KSA.git
+
+
+ (49.204.211.195)
+
+
+user - appaarao15 pass - HIbwdMv4Tv6D35kE
