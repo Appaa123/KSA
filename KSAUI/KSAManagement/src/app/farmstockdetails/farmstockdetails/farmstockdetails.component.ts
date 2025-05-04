@@ -6,16 +6,18 @@ import { HttpClient } from '@angular/common/http';
 import { response } from 'express';
 import { error } from 'console';
 import { catchError, Observable, tap } from 'rxjs';
+import { Route, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-farmstockdetails',
-  imports: [CommonModule, NavbarComponent, FormsModule],
+  imports: [CommonModule, NavbarComponent, FormsModule, RouterModule],
   templateUrl: './farmstockdetails.component.html',
   styleUrl: './farmstockdetails.component.css'
 })
 export class FarmstockdetailsComponent {
 
   isOffcanvasOpen: boolean = false;
+  data:any[] = [];
 
   formData = {
     type: '',
@@ -25,7 +27,7 @@ export class FarmstockdetailsComponent {
     summary: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   submitData() : Observable<any> {
     const apiURL = "https://ksaapi.onrender.com/api/FarmStock";
@@ -42,8 +44,24 @@ export class FarmstockdetailsComponent {
 
   onSubmit() {
     this.submitData().subscribe({
-      next : () => alert("Form Submitted successfully"),
+      next : () => {
+        this.getFarmStockData();
+        alert("Details Submitted successfully");
+        this.router.navigate(['/farmstock']);
+      },
       error : () => alert("Failed to submit form")
+    });
+  }
+
+  getFarmStockData(){
+    this.http.get<any>("https://ksaapi.onrender.com/api/FarmStock").subscribe({
+      next: (response) => {
+        this.data = response;
+        console.log(this.data);
+      },
+      error: (error) => {
+        console.error('Error fetching farmstock data', error);
+      },
     });
   }
 
