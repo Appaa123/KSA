@@ -8,28 +8,28 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
+//Allow CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("https://appaa123.github.io", "http://localhost:5001")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+// ✅ Bind strongly-typed configuration (optional)
 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 ServicePointManager.ServerCertificateValidationCallback +=
     (sender, cert, chain, sslPolicyErrors) => true;
 // Add services to the container.
 builder.Services.AddSingleton<IKSAService, KSAServcie>();
 builder.Services.AddControllers();
-// builder.Services
-//     .AddIdentityMongoDbProvider<ApplicationUser, ApplicationRole, Guid>(identityOptions =>
-//     {
-//         identityOptions.Password.RequireDigit = false;
-//         identityOptions.Password.RequiredLength = 6;
-//     },
-//     mongoIdentityOptions =>
-//     {
-//         mongoIdentityOptions.ConnectionString = "mongodb://localhost:27017";
-//         mongoIdentityOptions.DatabaseName = "MyAuthDB";
-//     });
-
-// builder.Services.AddIdentityServer()
-//     .AddAspNetIdentity<ApplicationUser>()
-//     .AddDeveloperSigningCredential();
-//     .AddDefaultTokenProviders();
 var jwtKey = builder.Configuration["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey))
 {
@@ -59,6 +59,7 @@ builder.Services.AddAuthorization(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection("MongoDB"));
 builder.Services.AddSingleton<IMongoClient>(sp =>
@@ -78,16 +79,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseCors(policy =>
-    policy.AllowAnyOrigin() // Allows requests from any domain
-          .AllowAnyMethod() // Allows GET, POST, PUT, DELETE, etc.
-          .AllowAnyHeader()); // Allows all headers
-//app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("AllowFrontend"); // 🔥 This must go early
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapGet("/config-check", (IConfiguration config) =>
+{
+    return Results.Ok(new {
+        JwtKey = config["Jwt:Key"],
+        Issuer = config["Jwt:Issuer"],
+        Mongo = config["MongoDB:ConnectionString"]
+    });
+});
 
+app.MapControllers();
 app.Run();

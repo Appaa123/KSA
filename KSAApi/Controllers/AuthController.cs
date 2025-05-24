@@ -7,8 +7,7 @@ using System.Text;
 
 namespace KSAApi.Controllers
 {
-
-    [Microsoft.AspNetCore.Mvc.Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -21,7 +20,7 @@ namespace KSAApi.Controllers
 
         [HttpPost("login")]
 
-        public async Task<IActionResult> Login([FromBody] User user)
+        public  IActionResult Login([FromBody] User user)
         {
             if(user.Username == "admin" && user.Password == "password"){
 

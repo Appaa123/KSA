@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { User } from '../../Models/User';
 import { catchError, Observable, tap } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { provideRouter, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-auth',
@@ -22,42 +22,43 @@ export class AuthComponent {
     Password:''
   };
 
-  constructor(private http:HttpClient, private router:Router){
+  constructor(private http:HttpClient, private router:Router, @Inject(PLATFORM_ID) private platformId: Object){
   }
 
    submitData() : Observable<any> {
       const apiURL = "https://ksaapi.onrender.com/api/Auth/login";
 
-      return this.http.post<Object>("https://ksaapi.onrender.com/api/Auth/login",
+      return this.http.post<{token: string}>("https://ksaapi.onrender.com/api/Auth/login",
         this.formData,
         {
-          headers: { 'Content-Type': 'application/json' }
+          headers: new HttpHeaders({ 'Content-Type': 'application/json' })
         }
-      )
-      .pipe(
-        tap(response => console.log("Success!", response)),
-        catchError(error => {
-          console.error('Error:', error);
-          throw error;
-        })
-        
       );
     }
   
     onSubmit() {
-      this.submitData().subscribe({
-        next: () => {
+      this.submitData()
+      .subscribe({
+        next: (response) => {
+          this.token = response.token; // ✅ Assign token here
+          console.log("Token received:", this.token);
           alert("Form Submitted successfully");
-          localStorage.setItem('user', this.formData.Username);
-          sessionStorage.setItem('token',this.token);
           try{
            this.router.navigate(['/dashboard']);
           }
           catch (error) {
             console.error('Navigation failed:', error);
           }
+      
+          if (isPlatformBrowser(this.platformId)) {
+          // Optional: store in sessionStorage for future authenticated requests
+          sessionStorage.setItem('jwt', this.token);
+          sessionStorage.setItem('user', this.formData.Username);
+          }
         },
-        error : () => alert("Failed to login, please check the username or password")
+        error: (error) => {
+          console.error('Login error:', error);
+        }
       });
-    }
+    } 
 }

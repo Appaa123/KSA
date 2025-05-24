@@ -1,5 +1,6 @@
 using KSAApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,20 +21,18 @@ namespace KSAApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
-
-        public async Task<List<FarmStock>> GetCowStock(){
-            return await _ksaService.GetFarmStockAsync();
+        public List<FarmStock> GetCowStock(){
+            return _ksaService.GetFarmStockAsync();
         }
 
         [HttpPut]
 
-        public IActionResult UpdateFarmStock(string Id, [FromBody] FarmStock farmStock){
+        public async Task<IActionResult> UpdateFarmStock(string Id, [FromBody] FarmStock farmStock){
             if (farmStock == null)
             {
                   return BadRequest("Invalid data.");
             }
-            _ksaService.UpdateFarmStockAsync(Id, farmStock);
+            await _ksaService.UpdateFarmStockAsync(Id, farmStock);
             farmStockList.Add(farmStock);
             return CreatedAtAction(nameof(GetStockById), new { id = farmStock.Id }, farmStock);
         }

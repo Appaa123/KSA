@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DoCheck, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { error } from 'console';
 import { response } from 'express';
 import { catchError, Subscription, tap, throwError, throwIfEmpty } from 'rxjs';
@@ -21,20 +21,44 @@ export class FarmstockComponent implements OnInit, OnDestroy {
   farmStockSubscription!: Subscription;
   selectedRecord: any = {}; // Store selected record
   editModal: any;
-  deleteModal: any; // Reference to modal instance
+  deleteModal: any; 
+  token: any = "";
+  // Reference to modal instance
   //private previousData = '';
-   constructor(private http: HttpClient, private router:Router, private cdRef: ChangeDetectorRef) {}
+   constructor(private http: HttpClient, private router:Router, private cdRef: ChangeDetectorRef, @Inject(PLATFORM_ID) private platformId: Object) {}
    
+   ngOnInit(): void {
+    console.log('🚀 ngOnInit() triggered!');
+    if (isPlatformBrowser(this.platformId)) {
+      this.token = sessionStorage.getItem('jwt');
+    } 
+      this.getFarmStockData();
+
+  }
+
    getFarmStockData(){
     if (this.farmStockSubscription) {
       this.farmStockSubscription.unsubscribe();
       console.log('Unsubscribed from farm stock API');
     }
-    console.log('📡 Fetching fresh data...');
+    //console.log('📡 Fetching fresh data...');
+    
+    
+    
+    console.log('📡 Fetching JWT token')
+       
+    // if (typeof window !== 'undefined' && window.sessionStorage) {
+    //   // Use sessionStorage
+    //    this.token = sessionStorage.getItem('jwt'); 
+    // }
+
     this.farmStockSubscription = this.http.get<any>("https://ksaapi.onrender.com/api/FarmStock",
       {
-        headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
-        params: { '_t': new Date().getTime().toString() } // Prevents browser caching
+        headers: {
+          'Authorization': `Bearer ${this.token}`,         // 👈 Add this line
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       }).subscribe({
       next: (response) => {
         console.log('✅ API Response:', response);
@@ -66,9 +90,15 @@ export class FarmstockComponent implements OnInit, OnDestroy {
     // Simulate API delete request
     //this.data = this.data.filter(item => item.id !== this.selectedRecord.id);
     const apiURL = "https://ksaapi.onrender.com/api/FarmStock";
-        
+    var token = "";
+    if (typeof window !== 'undefined' && sessionStorage.getItem('jwt')) {
+      token = sessionStorage.getItem('jwt')!;
+    }
         this.http.delete(apiURL,
-          {headers: { 'Content-Type': 'application/json' },
+          {headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+           },
             params: {'Id': this.selectedRecord.id},
           })
           .pipe(
@@ -119,11 +149,6 @@ export class FarmstockComponent implements OnInit, OnDestroy {
     this.editModal.hide();
     this.getFarmStockData();
     }
-
-   ngOnInit(): void {
-    console.log('🚀 ngOnInit() triggered!'); 
-      this.getFarmStockData();
-  }
 
   // ngDoCheck(): void {
   //     const currentData = JSON.stringify(this.data);

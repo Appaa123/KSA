@@ -14,7 +14,7 @@ public KSAServcie(FarmStockRepository farmStockRepository){
 }
 CowStock cowStock = new CowStock();
 
-public async Task<CowStock> getRandomCowStock() {
+public CowStock getRandomCowStock() {
 
     cowStock.Date = new DateOnly();
     cowStock.Type = "Dry Grass";
@@ -25,8 +25,8 @@ public async Task<CowStock> getRandomCowStock() {
     return cowStock;
 }
 
-public async Task<List<FarmStock>> GetFarmStockAsync(){
-    return await _farmStockRepository.GetAllAsync();
+public List<FarmStock> GetFarmStockAsync(){
+    return _farmStockRepository.GetAllAsync();
 }
 
 public async Task AddFarmStockAsync(FarmStock farmStock){
